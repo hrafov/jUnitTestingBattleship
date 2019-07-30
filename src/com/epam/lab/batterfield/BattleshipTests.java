@@ -10,7 +10,7 @@ import org.junit.Test;
 public class BattleshipTests {
    	
 	private int[][] he = new int[10][10];
-	BattleField b = new BattleField();	
+	Battlefield b = new Battlefield();	
 		
 	@Test
 	public void battleshipInitializingAtStart() {
@@ -25,7 +25,7 @@ public class BattleshipTests {
 
 	@Test
 	public void sumOfAllShipElements() {
-		b.initialize();
+		b.initializeComputerBattlefield();
 		int sum = 0;
 		sum += b.carrier.getBodyOfShip().size();
 		sum += b.battleship.getBodyOfShip().size();
@@ -91,9 +91,9 @@ public class BattleshipTests {
 		assertTrue( !dialog.isInputForHittingValid("Too long string"));		
 	}
 		
-	//test ships are not diagonal
+	//test ships are not diagonal(
 	
-	//test ships not touching each other	
+	//test ships not touching each other(	
 	
 	@Test
 	public void method4Copy() {
