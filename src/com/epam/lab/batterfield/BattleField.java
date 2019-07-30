@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class BattleField {	
+public class Battlefield {	
 	private int[][] he = new int[10][10];
 	private int[][] battle = new int[10][10];
 	private Random rand = new Random();	
@@ -31,7 +31,7 @@ public class BattleField {
 	private BodyPart bodyPart;	
 	
 // initialize all 5 Battleships	
-	public void initialize() {		
+	public void initializeComputerBattlefield() {		
 		
 		// Carrier and vicinity - start point of building
 		carrierBody = createShipAtStart(carrier);
@@ -352,4 +352,3 @@ public class BattleField {
 	}
 	
 }
-

@@ -10,7 +10,4 @@ public interface shippable {
 	public List<BodyPart> getBodyOfShip();
 	public void setBodyOfShip(List<BodyPart> bodyOfShip);
 	public boolean isShipAlive();	
-	//TODO may be method buildAtStart is not needed?	
-	//public void buildAtStart();
-	
 }
