@@ -2,16 +2,20 @@ package com.epam.lab.batterfield;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class DialogWithComputer {
 
 	private boolean youFirstStep;
 	private Scanner scanner = new Scanner(System.in);
-	private BattleField b;
+	private Battlefield b;
 	private List<String> userLogs = new ArrayList<>();
+	private int[][] battleWithComputerEys = new int[10][10];
+	private Random rand = new Random();
+	String yourStep;
 
-	public DialogWithComputer(boolean youFirstStep, BattleField b) {
+	public DialogWithComputer(boolean youFirstStep, Battlefield b) {
 		this.youFirstStep = youFirstStep;
 		this.b = b;
 	}
@@ -19,9 +23,9 @@ public class DialogWithComputer {
 	public void start() {
 		if (youFirstStep) {			
 			
-			for (int a = 0; a <= 10000; a++) {
+			for (int iii = 0; iii <= 10000; iii++) {
 				System.out.println("=== Please write your step here ===");
-				String yourStep = scanner.nextLine();
+				yourStep = scanner.nextLine();
 				if(userLogs.contains(yourStep)) {
 					System.out.println("=== You already did this step, please try again ===");
 					continue;
@@ -33,7 +37,7 @@ public class DialogWithComputer {
 				if (!isInputForHittingValid(yourStep))
 					continue;
 
-				if (isDamaged(yourStep)) {
+				if (isShipDamaged(yourStep)) {
 					System.out.println("+++ from start method: damaged or hit or you win +++");					
 					b.setSomePartOfBodyOfShipIsNotAlive(yourStep);
 					b.setYourStepToBattleAsDamaged(yourStep); // with 8 integer
@@ -50,7 +54,7 @@ public class DialogWithComputer {
 				} else {// TODO it is not need isMissed method at all
 					if (isMissed(yourStep)) {
 						System.out.println("+++ Missed +++");
-						// TODO mark battlefield like missed
+						// mark battlefield point as missed
 						b.setYourStepToBattleAsMissed(yourStep);
 						b.displayBatterFieldForUserInFightingProcessInConsole();
 						computerStartGaming();
@@ -58,6 +62,7 @@ public class DialogWithComputer {
 				}
 
 			}
+		// computer is doing its first step	
 		} else {
 			System.out.println("=== Computer writing first step here ===");
 			System.out
@@ -68,7 +73,7 @@ public class DialogWithComputer {
 		System.out.println("=== Bye, next time ===");
 	}
 
-	public boolean isDamaged(String yourStep) {
+	public boolean isShipDamaged(String yourStep) {
 		
 		int x = Integer.parseInt(yourStep.substring(0, 1));
 		int y = Integer.parseInt(yourStep.substring(1));
@@ -114,7 +119,7 @@ public class DialogWithComputer {
 
 	public boolean isShipHit(String shipName) {
 		// through all fleet
-		System.out.println("+++ from isShipHit: shipName" + shipName);
+//		System.out.println("+++ from isShipHit: shipName" + shipName);
 		if ((b.battleship.getName() == shipName) && !b.battleship.isShipAlive())
 			return true;
 		else if ((b.carrier.getName() == shipName) && !b.carrier.isShipAlive())
@@ -135,45 +140,45 @@ public class DialogWithComputer {
 		// check through all fleet
 		for (BodyPart bp : b.battleship.getBodyOfShip()) {
 			if ((bp.getX() == x) && (bp.getY() == y)) {
-				System.out.println(" ++++ from getShipNameFromStep: this is - "
-						+ b.battleship.getName());
+//				System.out.println(" ++++ from getShipNameFromStep: this is - "
+//						+ b.battleship.getName());
 				return b.battleship.getName();
 			}
 		}
 
 		for (BodyPart bp : b.carrier.getBodyOfShip()) {
 			if ((bp.getX() == x) && (bp.getY() == y)) {
-				System.out.println(" ++++ from getShipNameFromStep: this is - "
-						+ b.carrier.getName());
+//				System.out.println(" ++++ from getShipNameFromStep: this is - "
+//						+ b.carrier.getName());
 				return b.carrier.getName();
 			}
 		}
 
 		for (BodyPart bp : b.cruiser.getBodyOfShip()) {
 			if ((bp.getX() == x) && (bp.getY() == y)) {
-				System.out.println(" ++++ from getShipNameFromStep: this is - "
-						+ b.cruiser.getName());
+//				System.out.println(" ++++ from getShipNameFromStep: this is - "
+//						+ b.cruiser.getName());
 				return b.cruiser.getName();
 			}
 		}
 
 		for (BodyPart bp : b.destroyer.getBodyOfShip()) {
 			if ((bp.getX() == x) && (bp.getY() == y)) {
-				System.out.println(" ++++ from getShipNameFromStep: this is - "
-						+ b.destroyer.getName());
+//				System.out.println(" ++++ from getShipNameFromStep: this is - "
+//						+ b.destroyer.getName());
 				return b.destroyer.getName();
 			}
 		}
 
 		for (BodyPart bp : b.submarine.getBodyOfShip()) {
 			if ((bp.getX() == x) && (bp.getY() == y)) {
-				System.out.println(" ++++ from getShipNameFromStep: this is - "
-						+ b.submarine.getName());
+//				System.out.println(" ++++ from getShipNameFromStep: this is - "
+//						+ b.submarine.getName());
 				return b.submarine.getName();
 			}
 		}
 
-		System.out.println(" ++++ from getShipNameFromStep: this is - " + name);
+//		System.out.println(" ++++ from getShipNameFromStep: this is - " + name);
 		return name;
 	}
 
@@ -191,9 +196,55 @@ public class DialogWithComputer {
 		return true;
 	}
 
-	public void computerStartGaming() {
-		//TODO
-		System.out.println("=== Computer start gaming - not realized yet( ===");
+	public void computerStartGaming() {		
+	
+		int x = 0;
+		int y = 0;
+		
+		for (int iii = 0; iii <= 10000; iii++) {// while computer did damage or hit 
+			
+			for (int ii = 0; ii <= 10000; ii++){
+				x = rand.nextInt(10);
+				y = rand.nextInt(10);
+				if( battleWithComputerEys[y][x] == 0 ) { 
+					System.out.println("*** Computer step: " + x + y);	//request
+					System.out.println("=== Please write your step here ===");
+					break;
+				}			
+			}
+			
+			yourStep = scanner.nextLine(); // response 
+			
+			if( yourStep.equals("win") || yourStep.equals("w") ){
+				System.out.println("*** Computer: win!!! ***");
+				//TODO? stop application
+				break;
+			}
+			else if( yourStep.equals("hit") || yourStep.equals("h") ){
+				System.out.println("*** Computer: your answer = hit ***");				
+				battleWithComputerEys[y][x] = 1;
+				//TODO
+				//TODO look for some strategy for game optimizing
+				//TODO
+			}
+			else if( yourStep.equals("damaged") || yourStep.equals("d") ){
+				System.out.println("*** Computer: your answer = damaged ***");				
+				battleWithComputerEys[y][x] = 1;
+				//TODO
+				//TODO look for some strategy for game optimizing
+				//TODO
+			}
+			else if( yourStep.equals("missed") || yourStep.equals("m") ){
+				System.out.println("*** Computer: your answer = missed ***");				
+				battleWithComputerEys[y][x] = 7;
+				break;
+			}
+			else{
+				System.out.println("*** Computer: something come up) - some problem with my logic or our write wrong answer ***");				
+			}
+			
+		}
+		
 	}
 
 	public boolean isInputForHittingValid(String input) {
