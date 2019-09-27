@@ -20,7 +20,7 @@ public abstract class Ship implements shippable {
 		return numberOfBodyParts;
 	}
 
-	public void setNunmberOfBodyParts(int numberOfBodyParts) {
+	public void setNumberOfBodyParts(int numberOfBodyParts) {
 		this.numberOfBodyParts = numberOfBodyParts;
 	}
 
@@ -31,13 +31,12 @@ public abstract class Ship implements shippable {
 	public void setBodyOfShip(List<BodyPart> bodyOfShip) {
 		this.bodyOfShip = bodyOfShip;
 	}	
-	
+		
 	public boolean isShipAlive(){		
-    	for (int i = 0; i < bodyOfShip.size(); i++){    		
-    		System.out.println("+++ test from isShipAlive === i = " + i + " bodyOfShip.get(i).getIsAlive() = " + bodyOfShip.get(i).getIsAlive());
-    		if( bodyOfShip.get(i).getIsAlive() ) return true; 
+    	for ( BodyPart b: bodyOfShip){    		
+    		if( b.getIsAlive() ) return true; 
     	}    		
     	return false;
     }
-		
+			
 }
