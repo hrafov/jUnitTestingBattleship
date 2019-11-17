@@ -2,20 +2,13 @@ package com.epam.lab.batterfield;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import static com.epam.lab.battlefield.util.Constants.*;
-public class Battlefield {		
-	private int[][] computerBattlefieldForTesting = new int[10][10];
+public class Battlefield {	
+	private View view = new View();
 	private int[][] computerField = new int[10][10];
 	private Random randomValue = new Random();
-	
-	Battleship carrier = new Battleship("Carrier", 5);
-	Battleship battleship = new Battleship("Battleship", 4);
-	Battleship cruiser = new Battleship("Cruiser", 3);
-	Battleship submarine = new Battleship("Submarine", 3);
-	Battleship destroyer = new Battleship("Destroyer", 2);
-	
-	private List<Battleship> fleet = new ArrayList<>();
-	
+	Fleet fleet;	
 	private List<BodyPart> carrierBody = new ArrayList<>();
 	private List<BodyPart> battleshipBody = new ArrayList<>();
 	private List<BodyPart> cruiserBody = new ArrayList<>();
@@ -26,190 +19,57 @@ public class Battlefield {
 	private List<BodyPart> battleshipBodyVicinity = new ArrayList<>();
 	private List<BodyPart> cruiserBodyVicinity = new ArrayList<>();
 	private List<BodyPart> submarineBodyVicinity = new ArrayList<>();	
-	@SuppressWarnings("unused")
-	private List<BodyPart> destroyerBodyVicinity = new ArrayList<>();
-	
-	List<BodyPart> vicinity = new ArrayList<>();
 	private BodyPart bodyPart;
 	
 	public Battlefield() {
-		fleet.add(battleship);
-		fleet.add(carrier);
-		fleet.add(cruiser);
-		fleet.add(destroyer);
-		fleet.add(submarine);
+		this.fleet = new Fleet();		
 		this.initializeComputerBattlefieldWithShips();
 	}	
     	
 	public void initializeComputerBattlefieldWithShips() {		
-		carrierBody = createShipAtStart(carrier);
-		carrierBodyVicinity = createVicinityOfTheShip(carrierBody);		
+		carrierBody = createShipAtStart(fleet.carrier);
+		carrierBodyVicinity = view.createVicinityOfTheShip(carrierBody);		
 		
-		for (int n = 0; n < 1000; n++){
+		for (int n = 0; n < NOT_RALLY_BIG_MAGIC_NUMBER_OF_ITERATIONS; n++){
 			battleshipBody.clear();
-			battleshipBody = createShipAtStart(battleship);			
+			battleshipBody = createShipAtStart(fleet.battleship);			
 			if( !isShipsInterrelated( battleshipBody, carrierBodyVicinity)) break;			
 		}
-		battleshipBodyVicinity = createVicinityOfTheShip(battleshipBody);		
+		battleshipBodyVicinity = view.createVicinityOfTheShip(battleshipBody);		
 		
-		for (int n = 0; n < 1000; n++){
+		for (int n = 0; n < NOT_RALLY_BIG_MAGIC_NUMBER_OF_ITERATIONS; n++){
 			cruiserBody.clear();
-			cruiserBody = createShipAtStart(cruiser);			
+			cruiserBody = createShipAtStart(fleet.cruiser);			
 			if( !isShipsInterrelated( cruiserBody, carrierBodyVicinity) &&
 			    !isShipsInterrelated( cruiserBody, battleshipBodyVicinity) ) break;
 		}
-		cruiserBodyVicinity = createVicinityOfTheShip(cruiserBody);		
+		cruiserBodyVicinity = view.createVicinityOfTheShip(cruiserBody);		
 		
-		for (int n = 0; n < 1000; n++){
+		for (int n = 0; n < NOT_RALLY_BIG_MAGIC_NUMBER_OF_ITERATIONS; n++){
 			submarineBody.clear();
-			submarineBody = createShipAtStart(submarine);			
+			submarineBody = createShipAtStart(fleet.submarine);			
 			if( !isShipsInterrelated( submarineBody, carrierBodyVicinity) &&
 			    !isShipsInterrelated( submarineBody, battleshipBodyVicinity) &&
 			    !isShipsInterrelated( submarineBody, cruiserBodyVicinity)) break;
 		}
-		submarineBodyVicinity = createVicinityOfTheShip(submarineBody);
+		submarineBodyVicinity = view.createVicinityOfTheShip(submarineBody);
 				
-		for (int n = 0; n < 1000; n++){
+		for (int n = 0; n < NOT_RALLY_BIG_MAGIC_NUMBER_OF_ITERATIONS; n++){
 			destroyerBody.clear();
-			destroyerBody = createShipAtStart(destroyer);			
+			destroyerBody = createShipAtStart(fleet.destroyer);			
 			if( !isShipsInterrelated( destroyerBody, carrierBodyVicinity) &&
 			    !isShipsInterrelated( destroyerBody, battleshipBodyVicinity) &&
 			    !isShipsInterrelated( destroyerBody, cruiserBodyVicinity) &&
 			    !isShipsInterrelated( destroyerBody, submarineBodyVicinity)) break;
-		}
-		destroyerBodyVicinity = createVicinityOfTheShip(destroyerBody);
-		
-	}
-		
-	public void displayBattleFieldInConsole(List<BodyPart> carrierBody, List<BodyPart> battleshipBody,
-			                                List<BodyPart> cruiserBody, List<BodyPart> submarineBody,
-			                                List<BodyPart> destroyerBody) { 	
-		for (int i = 0; i < carrierBody.size(); i++) {
-			computerBattlefieldForTesting[carrierBody.get(i).getY()][carrierBody.get(i).getX()] = 1;
-		}
-		for (int i = 0; i < battleshipBody.size(); i++) {
-			computerBattlefieldForTesting[battleshipBody.get(i).getY()][battleshipBody.get(i).getX()] = 2;
-		}
-		for (int i = 0; i < cruiserBody.size(); i++) {
-			computerBattlefieldForTesting[cruiserBody.get(i).getY()][cruiserBody.get(i).getX()] = 3;
-		}
-		for (int i = 0; i < submarineBody.size(); i++) {
-			computerBattlefieldForTesting[submarineBody.get(i).getY()][submarineBody.get(i).getX()] = 4;
-		}
-		for (int i = 0; i < destroyerBody.size(); i++) {
-			computerBattlefieldForTesting[destroyerBody.get(i).getY()][destroyerBody.get(i).getX()] = 5;
-		}		
-		displayBattleField(computerBattlefieldForTesting);		
-	}
+		}				
+	}	
 	
-	public String fromIntToString(int y) {
-		String c = "Z";
-		switch (y) {
-		case 0:
-			c = "A";
-			break;
-		case 1:
-			c = "B";
-			break;
-		case 2:
-			c = "C";
-			break;
-		case 3:
-			c = "D";
-			break;
-		case 4:
-			c = "E";
-			break;
-		case 5:
-			c = "F";
-			break;
-		case 6:
-			c = "G";
-			break;
-		case 7:
-			c = "H";
-			break;
-		case 8:
-			c = "I";
-			break;
-		case 9:
-			c = "J";
-			break;
-		default:
-			System.out.println("=== Error in method from09ToAJ ===");
-		}
-		return c;
-	}
-	
-	public List<BodyPart> createVicinityOfTheShip(List<BodyPart> shipBody){				
-		int x; 
-		int y;
-		for(int i = 0; i < shipBody.size(); i++){
-			x = shipBody.get(i).getX();
-			y = shipBody.get(i).getY();
-			if( y > 0 ) vicinity.add(new BodyPart(x,y-1,true));
-			if( y < 9 ) vicinity.add(new BodyPart(x,y+1,true));
-			if( x < 9 ) vicinity.add(new BodyPart(x+1,y,true));
-			if( x > 0 ) vicinity.add(new BodyPart(x-1,y,true));
-			if( x < 9 && y > 0 ) vicinity.add(new BodyPart(x+1,y-1,true));
-			if( x < 9 && y < 9 ) vicinity.add(new BodyPart(x+1,y+1,true));
-			if( x > 0 && y < 9 ) vicinity.add(new BodyPart(x-1,y+1,true));
-			if( x > 0 && y > 0 ) vicinity.add(new BodyPart(x-1,y-1,true));			
-		}
-		return vicinity;
-	}
-	
-	//this method only for development testing
-	public void displayBattleFieldWithVicinityInConsole(List<BodyPart> shipBody, List<BodyPart> ship2Body,
-			    List<BodyPart> ship3Body, List<BodyPart> ship4Body, List<BodyPart> ship5Body){		
-		    vicinity = createVicinityOfTheShip(shipBody);			
-			for (int i = 0; i < vicinity.size(); i++) {
-				computerBattlefieldForTesting[vicinity.get(i).getY()][vicinity.get(i).getX()] = 8;
-			}
-			for (int i = 0; i < shipBody.size(); i++) {
-				computerBattlefieldForTesting[shipBody.get(i).getY()][shipBody.get(i).getX()] = 1;
-			}			
-			vicinity.clear();
-			vicinity = createVicinityOfTheShip(ship2Body);
-			for (int i = 0; i < vicinity.size(); i++) {
-				computerBattlefieldForTesting[vicinity.get(i).getY()][vicinity.get(i).getX()] = 8;
-			}
-			for (int i = 0; i < ship2Body.size(); i++) {
-				computerBattlefieldForTesting[ship2Body.get(i).getY()][ship2Body.get(i).getX()] = 2;
-			}			
-			vicinity.clear();
-			vicinity = createVicinityOfTheShip(ship3Body);
-			for (int i = 0; i < vicinity.size(); i++) {
-				computerBattlefieldForTesting[vicinity.get(i).getY()][vicinity.get(i).getX()] = 8;
-			}
-			for (int i = 0; i < ship3Body.size(); i++) {
-				computerBattlefieldForTesting[ship3Body.get(i).getY()][ship3Body.get(i).getX()] = 3;
-			}			
-			vicinity.clear();
-			vicinity = createVicinityOfTheShip(ship4Body);
-			for (int i = 0; i < vicinity.size(); i++) {
-				computerBattlefieldForTesting[vicinity.get(i).getY()][vicinity.get(i).getX()] = 8;
-			}
-			for (int i = 0; i < ship4Body.size(); i++) {
-				computerBattlefieldForTesting[ship4Body.get(i).getY()][ship4Body.get(i).getX()] = 4;
-			}			
-			vicinity.clear();
-			vicinity = createVicinityOfTheShip(ship5Body);
-			for (int i = 0; i < vicinity.size(); i++) {
-				computerBattlefieldForTesting[vicinity.get(i).getY()][vicinity.get(i).getX()] = 8;
-			}
-			for (int i = 0; i < ship5Body.size(); i++) {
-				computerBattlefieldForTesting[ship5Body.get(i).getY()][ship5Body.get(i).getX()] = 5;
-			}			
-			displayBattleField(computerBattlefieldForTesting);
-	}
-		
 	public List<BodyPart> createShipAtStart(Battleship b){		
 		int randomX;
 		int randomY;	
 		int direction;
 		boolean shipReady;		
-				for (int j = 0; j < 10000; j++) {
+				for (int j = 0; j < NOT_RALLY_BIG_MAGIC_NUMBER_OF_ITERATIONS; j++) {
 					randomX = randomValue.nextInt(10);
 					randomY = randomValue.nextInt(10);
 					direction = randomValue.nextInt(4);
@@ -267,18 +127,7 @@ public class Battlefield {
 		}
 		return false;
 	}
-		
-	public void displayBattleField( int[][] battlefield) {		
-		System.out.println("   0   1   2   3   4   5   6   7   8   9\n");		
-		for (int i = 0; i <= 9; i++) {
-			System.out.print(i + "  "); 
-			for (int j = 0; j <= 9; j++) {
-				System.out.print(battlefield[i][j] + "   ");
-			}
-			System.out.println("\n");
-		}		
-	}
-	
+			
 	public void setUserStepInCompFieldAsDamaged(String yourStep){
 		int x = Integer.parseInt(yourStep.substring(0, 1));
 		int y = Integer.parseInt(yourStep.substring(1));
@@ -294,20 +143,55 @@ public class Battlefield {
 	public void setSomePartOfBodyOfAllShipsNotAlive(String yourStep){		
 		int x = Integer.parseInt(yourStep.substring(0, 1));
 		int y = Integer.parseInt(yourStep.substring(1));		
-		for ( Battleship bs: fleet) {		
+		for ( Battleship bs: fleet.getFleet()) {		
 			for (BodyPart bp: bs.getBodyOfShip() ) {
 				if( bp.getX() == x && bp.getY() == y ) bp.setIsAlive(false);
 			}		
 		}
 	}
 	
-	public int[][] getBattlefield(){
-		return this.computerField;
+	public boolean isAnyShipOnThisPointDamaged(String yourStep) {			
+		int x = Integer.parseInt(yourStep.substring(0,1));
+		int y = Integer.parseInt(yourStep.substring(1));		
+		for ( Battleship bs: fleet.getFleet()) {
+			for (BodyPart bp : bs.getBodyOfShip()) {
+				if ((bp.getX() == x) && (bp.getY() == y) && bp.getIsAlive()) {					
+					return true;
+				}
+			}		
+		}
+		return false;
 	}
 	
-	public List<Battleship> getFleet() {
-		return fleet;
-	}		
+	public void setBodyPartAsDamaged(String yourStep){
+		int x = Integer.parseInt(yourStep.substring(0,1));
+		int y = Integer.parseInt(yourStep.substring(1));
+		for ( Battleship bs: fleet.getFleet()) {
+			for (BodyPart bp : bs.getBodyOfShip()) {
+				if ((bp.getX() == x) && (bp.getY() == y) && bp.getIsAlive()) {
+					bp.setIsAlive(false);					
+				}
+			}		
+		}
+	}
 	
+	public String getShipNameFromStep(String yourStep) {
+		int x = Integer.parseInt(yourStep.substring(0, 1));
+		int y = Integer.parseInt(yourStep.substring(1));		
+		for ( Battleship bs: fleet.getFleet()) {
+			for (BodyPart bp : bs.getBodyOfShip()) {
+				if ((bp.getX() == x) && (bp.getY() == y)) {
+					return bs.getName();
+				}
+			}		
+		}
+		System.out.println("===from getShipNameFromStep: there is no ship at " + yourStep);
+		return "Unknown name of Ship";
+	}
+
+	public int[][] getBattlefield() {		
+		return computerField;
+	}	
+		
 }
 
