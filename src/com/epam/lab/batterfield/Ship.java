@@ -37,6 +37,6 @@ public abstract class Ship implements shippable {
     		if( b.getIsAlive() ) return true; 
     	}    		
     	return false;
-    }
+    }	
 			
 }
